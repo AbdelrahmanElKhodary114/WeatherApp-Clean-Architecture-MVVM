@@ -2,32 +2,24 @@ import SwiftUI
 
 struct WeatherView: View {
     @StateObject private var viewModel = WeatherViewModel()
-    @State private var floatingAnimation = false
     
     var body: some View {
         ZStack {
-          
-            LinearGradient(gradient: Gradient(colors: [Color(red: 0.1, green: 0.1, blue: 0.2),
-                                                       Color(red: 0.2, green: 0.15, blue: 0.3)]),
-                           startPoint: .topLeading,
-                           endPoint: .bottomTrailing)
+            BackgroundGradientView()
                 .edgesIgnoringSafeArea(.all)
             
-            // Main content
-            if viewModel.isLoading {
+            switch viewModel.viewState {
+            case .loading:
                 loadingView
-            } else if !viewModel.errorMessage.isEmpty {
+            case .error:
                 errorView
-            } else {
+            case .loaded:
                 weatherContentView
             }
         }
         .overlay(refreshButton, alignment: .bottomTrailing)
         .onAppear {
             viewModel.fetchWeather()
-            withAnimation(Animation.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
-                floatingAnimation = true
-            }
         }
     }
         

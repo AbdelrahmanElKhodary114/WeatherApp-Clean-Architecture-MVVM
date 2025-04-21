@@ -5,15 +5,8 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
-            // Gradient background
-            LinearGradient(gradient: Gradient(colors: [Color(red: 0.1, green: 0.1, blue: 0.2),
-                                                       Color(red: 0.2, green: 0.15, blue: 0.3)]),
-                           startPoint: .topLeading,
-                           endPoint: .bottomTrailing)
-            .edgesIgnoringSafeArea(.all)
-            
-            // Floating bubbles background
-            BubbleBackground()
+            BackgroundGradientView()
+                .edgesIgnoringSafeArea(.all)
             
             ScrollView {
                 VStack(spacing: 30) {
@@ -139,58 +132,6 @@ struct SocialButton: View {
             isPressed = true
         } onRelease: {
             isPressed = false
-        }
-    }
-}
-
-struct BubbleBackground: View {
-    @State private var bubbles: [Bubble] = []
-    
-    struct Bubble {
-        var x: CGFloat
-        var y: CGFloat
-        var size: CGFloat
-        var opacity: Double
-        var speed: Double
-    }
-    
-    init() {
-        // Create random bubbles
-        for _ in 0..<15 {
-            bubbles.append(Bubble(
-                x: CGFloat.random(in: 0..<1),
-                y: CGFloat.random(in: 0..<1),
-                size: CGFloat.random(in: 20..<100),
-                opacity: Double.random(in: 0.05..<0.2),
-                speed: Double.random(in: 2..<5)
-            ))
-        }
-    }
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                ForEach(0..<bubbles.count, id: \.self) { index in
-                    Circle()
-                        .fill(Color.white.opacity(bubbles[index].opacity))
-                        .frame(width: bubbles[index].size, height: bubbles[index].size)
-                        .position(
-                            x: bubbles[index].x * geometry.size.width,
-                            y: bubbles[index].y * geometry.size.height
-                        )
-                        .animation(
-                            Animation.linear(duration: bubbles[index].speed)
-                                .repeatForever(autoreverses: true),
-                            value: bubbles[index].y
-                        )
-                        .onAppear {
-                            // Make bubbles float up and down
-                            withAnimation(Animation.linear(duration: bubbles[index].speed).repeatForever(autoreverses: true)) {
-                                bubbles[index].y = CGFloat.random(in: 0..<1)
-                            }
-                        }
-                }
-            }
         }
     }
 }
